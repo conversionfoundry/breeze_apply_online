@@ -1,0 +1,10 @@
+<% if target.errors.any? %>
+  <div class="errors">
+    <h2>Oops! Please check the following <%= target.errors.count == 1 ? "error" : "errors" %>:</h2>  
+    <ul>
+      <% target.errors.full_messages.each do |message| %>  
+        <%= content_tag :li, message %>
+      <% end %>
+    </ul>  
+  </div>  
+<% end %>
