@@ -1,9 +1,9 @@
 module Breeze
   module ApplyOnline
     class ApplicationPage < Breeze::Content::PageView
+      unloadable
+      
       field :title
-
-      validate :all_required_fields
 
       attr_accessor :data
 
@@ -56,18 +56,26 @@ module Breeze
         previous? ? form.views[_index - 1] : nil
       end
 
-      def form_fields
-        @form_fields ||= define_form_fields
+      def self.form_fields
+        read_inheritable_attribute(:form_fields) || 
+        write_inheritable_attribute(:form_fields, [])
       end
+      def form_fields; self.class.form_fields; end
       
       def data
         @data ||= {}
       end
       
+      def all_fields
+        @all_fields ||= returning ActiveSupport::OrderedHash.new do |hash|
+          form_fields.map(&:all_fields).flatten.each do |field|
+            hash[field.name] = field
+          end
+        end
+      end
+      
       def method_missing(sym, *args, &block)
-        if /^(\w+)_field$/ === sym.to_s
-          define_form_field $1, *args, &block
-        elsif field = form_fields.detect { |f| f.name == sym }
+        if field = all_fields[sym]
           field.value_for self
         elsif data.key? sym
           data[sym]
@@ -78,20 +86,15 @@ module Breeze
         end
       end
       
+      def self.field_group(name, options = {}, &block)
+        form_fields << Breeze::ApplyOnline::FormField::Group.new(self, name, options, &block)
+      end
+      
       def variables_for_render
         super.merge! :form => self
       end
 
     protected
-      def define_form_field(kind, name, options = {})
-        klass = "Breeze::ApplyOnline::FormField::#{kind.to_s.camelize}Field".constantize
-        klass.new name, options
-      end
-    
-      def define_form_fields
-        []
-      end
-      
       def load_data_from(session, request)
         returning((session[:form_data] && session[:form_data][form.id]) || {}) do |data|
           data.merge! request.params[:form] if request.params[:form].present?
@@ -103,12 +106,12 @@ module Breeze
         session[:form_data][form.id] = data
       end
       
-      def all_required_fields
-        form_fields.select(&:required?).each do |field|
-          next unless self.class.validators_on(field.name).empty?
-          errors[field.name] << "cannot be blank" if field.value_for(self).blank?
-        end
-      end
+      # def all_required_fields
+      #   form_fields.select(&:required?).each do |field|
+      #     next unless self.class.validators_on(field.name).empty?
+      #     errors[field.name] << "cannot be blank" if field.value_for(self).blank?
+      #   end
+      # end
     end
   end
 end

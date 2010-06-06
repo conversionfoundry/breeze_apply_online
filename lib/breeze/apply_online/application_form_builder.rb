@@ -25,9 +25,7 @@ module Breeze
       end
       
       def fields
-        field_contents = fieldset current_step.form_fields.collect { |field| field.to_html(self) }.join("\n")
-        field_contents.gsub! /<fieldset><ol class="form">\s*<\/ol><\/fieldset>/, ""
-        field_contents.html_safe
+        current_step.form_fields.collect { |field| field.to_html(self) }.join("\n").html_safe
       end
 
       def back_button(label = "Back", options = {})
@@ -41,6 +39,38 @@ module Breeze
       
       def error_messages
         template.render "/breeze/apply_online/error_messages", :target => object, :object_name => :form
+      end
+      
+      def radio_button_group(method, choices, options = {})
+        choice_lis = choices.collect do |choice|
+          choice = [ choice.to_s.humanize, choice ] unless choice.is_a?(Array)
+          radio_button method, choice.last, :label => choice.first, :errors => false
+        end.join("\n").html_safe
+        choice_list = template.content_tag :ol, choice_lis
+        input = template.content_tag :fieldset, choice_list
+        wrap method, input, options
+      end
+
+      def wrap(method, input, options)
+        contents = returning "" do |str|
+          str << label(method, options[:label], :required => options[:required]) unless options[:label] == false
+          str << wrap_field(input, options)
+          str << template.content_tag(:p, options[:hint], :class => "inline-hints") if options[:hint]
+          str << errors_for(method) if options[:errors] != false
+        end
+        template.content_tag :li, contents.html_safe, (options[:wrap] || {}).reverse_merge(:class => options[:kind])
+      end
+      
+    protected
+      def wrap_field(input, options = {})
+        before, after = [:before, :after].collect do |k|
+          options[k] ? template.content_tag(:span, options[k], :class => "#{k}-field") : ""
+        end
+        [ before, input, after ].reject(&:blank?).join(" ").html_safe
+      end
+
+      def filter_options(options)
+        super.except :before, :after, :message, :options
       end
     end
   end
