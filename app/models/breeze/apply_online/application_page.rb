@@ -79,8 +79,10 @@ module Breeze
           field.value_for self
         elsif data.key? sym
           data[sym]
-        elsif /^(\w+)\?$/ === sym.to_s && field = form_fields.detect { |f| f.name.to_s == $1 }
+        elsif /^(\w+)\?$/ === sym.to_s && (field = all_fields[$1.to_sym])
           !data[sym].blank?
+        elsif /^(\w+)_dependencies_met\?$/ === sym.to_s && (field = all_fields[$1.to_sym])
+          field.dependencies_met?(self)
         else
           super
         end
@@ -93,7 +95,7 @@ module Breeze
       def variables_for_render
         super.merge! :form => self
       end
-
+      
     protected
       def load_data_from(session, request)
         returning((session[:form_data] && session[:form_data][form.id]) || {}) do |data|

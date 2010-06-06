@@ -61,6 +61,10 @@ module Breeze
         template.content_tag :li, contents.html_safe, (options[:wrap] || {}).reverse_merge(:class => options[:kind])
       end
       
+      def scripting
+        template.javascript_tag "$(function() {\n#{@object.all_fields.values.map(&:dependencies).flatten.map(&:script).join("\n")}\n});".html_safe
+      end
+      
     protected
       def wrap_field(input, options = {})
         before, after = [:before, :after].collect do |k|

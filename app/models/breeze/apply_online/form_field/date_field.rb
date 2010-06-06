@@ -7,7 +7,7 @@ module Breeze
         end
         
         def value_for(view)
-          y, m, d = %w(1i 2i 3i).collect { |p| view.data[:"#{name}(#{p})"].try(:to_i) }
+          y, m, d = %w(1i 2i 3i).collect { |p| (i = view.data[:"#{name}(#{p})"]).blank? ? nil : i.to_i }
           y && m && d && Date.new(y, m, d)
         end
       end
