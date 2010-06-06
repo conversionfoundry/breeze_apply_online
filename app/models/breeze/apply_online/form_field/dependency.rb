@@ -51,7 +51,7 @@ module Breeze
           <<-EOS
             function() {
               if (this.type == 'radio' || this.type == 'checkbox') {
-                if (this.checked) { $('#form_field_wrapper_#{field_name}').toggle($(this).attr('value') #{cond}); }
+                if ($(this).attr('value') #{cond}) { $('#form_field_wrapper_#{field_name}').toggle(this.checked); }
               } else {
                 $('#form_field_wrapper_#{field_name}').toggle($(this).val() #{cond});
               }
