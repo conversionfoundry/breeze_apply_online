@@ -12,11 +12,14 @@ module Breeze
         def met?(view)
           dependencies.inject(true) do |result, (field_name, expected)|
             if result
-              field = view.all_fields[field_name]
-              value = field.value_for(view)
-              case expected
-              when true then !value.blank?
-              else value == expected
+              field = view.all_fields_so_far[field_name]
+              if value = field.value_for(view)
+                case expected
+                when true then !value.blank?
+                else value == expected
+                end
+              else
+                false
               end
             else
               false
@@ -26,7 +29,7 @@ module Breeze
 
         def normalize(d)
           returning({}) do |hash|
-            d.to_a.each do |a|
+            Array(d).each do |a|
               case a
               when Symbol then hash[a] = true
               when String then hash[a.to_sym] = true

@@ -55,6 +55,10 @@ module Breeze
       def previous
         previous? ? form.views[_index - 1] : nil
       end
+      
+      def all_previous_steps
+        form.views.select { |v| v._index < _index }
+      end
 
       def self.form_fields
         read_inheritable_attribute(:form_fields) || 
@@ -74,14 +78,23 @@ module Breeze
         end
       end
       
+      def all_fields_so_far
+        @all_fields_so_far ||= returning ActiveSupport::OrderedHash.new do |hash|
+          all_previous_steps.each do |step|
+            hash.merge! step.all_fields
+          end
+          hash.merge! all_fields
+        end
+      end
+      
       def method_missing(sym, *args, &block)
         if field = all_fields[sym]
           field.value_for self
         elsif data.key? sym
           data[sym]
-        elsif /^(\w+)\?$/ === sym.to_s && (field = all_fields[$1.to_sym])
+        elsif /^(\w+)\?$/ === sym.to_s && (field = all_fields_so_far[$1.to_sym])
           !data[sym].blank?
-        elsif /^(\w+)_dependencies_met\?$/ === sym.to_s && (field = all_fields[$1.to_sym])
+        elsif /^(\w+)_dependencies_met\?$/ === sym.to_s && (field = all_fields_so_far[$1.to_sym])
           field.dependencies_met?(self)
         else
           super
@@ -107,13 +120,6 @@ module Breeze
         session[:form_data] ||= {}
         session[:form_data][form.id] = data
       end
-      
-      # def all_required_fields
-      #   form_fields.select(&:required?).each do |field|
-      #     next unless self.class.validators_on(field.name).empty?
-      #     errors[field.name] << "cannot be blank" if field.value_for(self).blank?
-      #   end
-      # end
     end
   end
 end

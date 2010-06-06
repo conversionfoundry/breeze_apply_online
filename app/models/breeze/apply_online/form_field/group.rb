@@ -40,6 +40,10 @@ module Breeze
           ).html_safe
           form.template.content_tag @group ? :li : :div, fieldset, :id => "form_field_wrapper_#{name}"
         end
+        
+        def hidden_fields_for(form)
+          ""
+        end
       end
     end
   end

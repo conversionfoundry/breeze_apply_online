@@ -69,6 +69,10 @@ module Breeze
         def to_html(form)
           form.text_field name, clean_options
         end
+        
+        def hidden_fields_for(form)
+          form.hidden_field name
+        end
       end
     end
   end
