@@ -2,6 +2,8 @@ module Breeze
   module ApplyOnline
     module FormField
       class Dependency
+        unloadable
+        
         attr_accessor :field_name
         attr_accessor :dependencies
         
@@ -54,7 +56,9 @@ module Breeze
           <<-EOS
             function() {
               if (this.type == 'radio' || this.type == 'checkbox') {
-                if ($(this).attr('value') #{cond}) { $('#form_field_wrapper_#{field_name}').toggle(this.checked); }
+                if (this.checked) {
+                  $('#form_field_wrapper_#{field_name}').toggle($(this).attr('value') #{cond});
+                }
               } else {
                 $('#form_field_wrapper_#{field_name}').toggle($(this).val() #{cond});
               }

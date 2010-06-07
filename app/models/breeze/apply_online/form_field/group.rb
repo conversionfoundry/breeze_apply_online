@@ -24,6 +24,10 @@ module Breeze
           contents << Breeze::ApplyOnline::FormField::Group.new(page, *args, &block)
         end
         
+        def text(string)
+          contents << Breeze::ApplyOnline::FormField::Text.new(page, :"text_#{string.hash}", :text => string)
+        end
+        
         def legend
           options[:legend] || name.to_s.humanize
         end

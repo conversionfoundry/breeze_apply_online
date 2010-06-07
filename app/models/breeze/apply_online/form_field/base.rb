@@ -11,6 +11,13 @@ module Breeze
         def initialize(page, name, options = {}, &block)
           @page, @name, @options = page, name.to_sym, options || {}
           @group = @options.delete :group
+          
+          page.class_eval <<-EOS
+            def #{name}; all_fields[:#{name}].try :value_for, self; end
+            def #{name}?; !#{name}.blank?; end
+            def #{name}=(value); data[:#{name}] = value; end
+          EOS
+          
           add_dependencies
           add_validations
           instance_eval &block if block_given?

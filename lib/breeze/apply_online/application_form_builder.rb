@@ -66,11 +66,13 @@ module Breeze
       end
       
       def hidden_fields
-        @object.all_previous_steps.collect do |step|
-          step.all_fields.values.collect do |f|
-            f.dependencies_met?(@object) ? f.hidden_fields_for(self) : ""
-          end
-        end.flatten.join("\n").html_safe
+        unless ConfirmationPage === @object
+          @object.all_previous_steps.collect do |step|
+            step.all_fields.values.collect do |f|
+              f.dependencies_met?(@object) ? f.hidden_fields_for(self) : ""
+            end
+          end.flatten.join("\n").html_safe
+        end
       end
       
     protected
