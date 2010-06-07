@@ -25,7 +25,17 @@ module Breeze
 
         def add_dependencies
           case options[:if]
-          when Hash, Array, Symbol then dependencies << Dependency.new(name, options[:if])
+          when Symbol, Array then dependencies << Dependency.new(name, options[:if])
+          when Hash then
+            options[:if].each_pair do |k, v|
+              case v
+              when Hash
+                v.each_pair do |kk, vv|
+                  dependencies << "Breeze::ApplyOnline::FormField::#{kk.to_s.camelize}Dependency".constantize.new(name, { k => vv })
+                end
+              else dependencies << Dependency.new(name, { k => v })
+              end
+            end
           end
         end
         

@@ -43,7 +43,7 @@ module Breeze
 
         def script
           dependencies.collect do |f, e|
-            "var f = #{check_function(f, e)}; $(':input[name=form[#{f}]]').change(f).bind('input', f).change();"
+            "var f = #{check_function(f, e).gsub(/\s+/, ' ')}; $(':input[name=form[#{f}]]').change(f).bind('input', f).change();"
           end.join("\n")
         end
         

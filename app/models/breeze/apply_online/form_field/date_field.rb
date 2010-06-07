@@ -12,7 +12,13 @@ module Breeze
         end
         
         def hidden_fields_for(form)
-          %w(1i 2i 3i).collect { |p| form.hidden_field :"#{name}(#{p})" }.join
+          if v = value_for(form.object)
+            form.template.hidden_field_tag("form[#{name}(1i)]", v.year) + 
+            form.template.hidden_field_tag("form[#{name}(2i)]", v.month) +
+            form.template.hidden_field_tag("form[#{name}(3i)]", v.day)
+          else
+            ""
+          end
         end
       end
     end

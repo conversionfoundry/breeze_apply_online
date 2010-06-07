@@ -84,7 +84,7 @@ module Breeze
       end
 
       def filter_options(options)
-        super.except :before, :after, :message, :options
+        super.except :before, :after, :message, :options, :wrap
       end
     end
   end
