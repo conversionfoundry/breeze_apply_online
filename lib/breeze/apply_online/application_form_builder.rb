@@ -62,7 +62,40 @@ module Breeze
       end
       
       def scripting
-        template.javascript_tag "$(function() {\n#{@object.all_fields.values.map(&:dependencies).flatten.map(&:script).join("\n")}\n});".html_safe
+        script = "$(function() {\n#{@object.all_fields.values.map(&:dependencies).flatten.map(&:script).join("\n")}"
+        if @object.all_fields.values.any? { |f| Breeze::ApplyOnline::FormField::MultiRowField === f }
+          script << <<-EOS
+            function renumberMultiRowField(selector) {
+              $(selector).each(function() {
+                $('a.delete-row', this).toggle($('tbody tr', this).each(function(i) {
+                  $(':input', this).each(function() {
+                    $(this).attr('id', $(this).attr('id').replace(/_[0-9]+_/g, '_' + i + '_'));
+                    $(this).attr('name', $(this).attr('name').replace(/\\[[0-9]+\\]/g, '[' + i + ']'));
+                  });
+                }).length > 1);
+              });
+            }
+            
+            $('table.multi-row-field a.add-row').live('click', function() {
+              var t = $(this).closest('table');
+              var r = $('tbody tr', t).last();
+              r.clone().insertAfter(r).find('input[type=text]').val('');
+              renumberMultiRowField(t);
+              return false;
+            });
+
+            $('table.multi-row-field a.delete-row').live('click', function() {
+              var t = $(this).closest('table');
+              $(this).closest('tr').remove();
+              renumberMultiRowField(t);
+              return false;
+            });
+            
+            renumberMultiRowField('table.multi-row-field');
+          EOS
+        end
+        script << "\n});"
+        template.javascript_tag script.html_safe
       end
       
       def hidden_fields
