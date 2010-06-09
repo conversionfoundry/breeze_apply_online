@@ -20,6 +20,14 @@ module Breeze
             ""
           end
         end
+        
+        def output_value(view)
+          if v = value_for(view)
+            v.strftime("%e %B, %Y").strip
+          else
+            ""
+          end
+        end
       end
     end
   end

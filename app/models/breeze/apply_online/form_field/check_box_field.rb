@@ -15,6 +15,13 @@ module Breeze
         def dependencies_met?(view)
           true
         end
+        
+        def output_value(view)
+          case value_for(view)
+          when true, 1, "1" then "Yes"
+          else "No"
+          end
+        end
       end
     end
   end

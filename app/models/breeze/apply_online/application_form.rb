@@ -12,6 +12,10 @@ module Breeze
         end
       end
       
+      def application_class
+        Application
+      end
+      
     protected
       def define_form_pages
         views.build({ :name => "confirmation", :title => "Confirmation" }, Breeze::ApplyOnline::ConfirmationPage)

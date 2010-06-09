@@ -95,7 +95,7 @@ module Breeze
           EOS
         end
         script << "\n});"
-        template.javascript_tag script.html_safe
+        template.javascript_tag script.html_safe, :defer => "defer"
       end
       
       def hidden_fields

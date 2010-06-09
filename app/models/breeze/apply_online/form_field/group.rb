@@ -48,6 +48,25 @@ module Breeze
         def hidden_fields_for(form)
           ""
         end
+        
+        def output_html(view)
+          returning "" do |result|
+            if dependencies_met?(view)
+              unless options[:legend] == false
+                l = @group ? "h3" : "h2"
+                result << "<tr><th colspan=\"2\" style=\"text-align: left;\"><#{l}>#{legend}</#{l}></th></tr>\n"
+              end
+              contents.each do |field|
+                result << field.output_html(view)
+                result << "\n"
+              end
+            end
+          end
+        end
+        
+        def group
+          
+        end
       end
     end
   end

@@ -90,6 +90,18 @@ module Breeze
         def hidden_fields_for(form)
           form.hidden_field name
         end
+        
+        def output_html(view)
+          if dependencies_met?(view) && !value_for(view).blank?
+            "<tr><th style=\"text-align: left;\">#{label}</th><td>#{[ options[:before], output_value(view), options[:after] ].compact.join(" ")}</td></tr>"
+          else
+            ""
+          end
+        end
+        
+        def output_value(view)
+          value_for(view)
+        end
       end
     end
   end

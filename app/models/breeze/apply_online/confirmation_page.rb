@@ -6,8 +6,12 @@ module Breeze
       end
       
       def render!
-        @data = nil
-        save_data_to controller.session        
+        application = form.application_class.factory(self)
+        if application.save # ...then reset form data in session
+          @data = nil
+          save_data_to controller.session
+        end
+        
         super
       end
     end
