@@ -1,6 +1,6 @@
 module Breeze
   module ApplyOnline
-    class ApplicationMailer < ActionMailer::Base
+    class ApplicationMailer < Breeze::Mailer
       def application_email(application)
         @application = application
         mail :to => application.recipient, :from => application.sender, :subject => application.subject
