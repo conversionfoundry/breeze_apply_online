@@ -1,0 +1,8 @@
+<%= edit_form_for form, Breeze::Content::Page %>
+
+<%= form.fieldset :legend => "Application form" do %>
+  <%= form.text_field :recipient, :hint => "Email address to send form responses to" %>
+  <%= form.text_field :subject, :hint => "Subject for submissions from your form" %>
+  <%= form.check_box :confirmation_emails, :label => "Send confirmation emails to the user?", :hint => "Edit this template at <code>[theme]/breeze/apply_online/application_mailer/confirmation_email.html.erb</code>".html_safe %>
+  <%= form.text_field :confirmation_subject %>
+<% end %>

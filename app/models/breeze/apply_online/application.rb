@@ -18,19 +18,22 @@ module Breeze
       end
       
       def recipient
-        "matt@leftclick.com"
+        form.recipient
       end
       
       def sender
-        "matt@leftclick.com"
+        form.sender self
       end
       
       def subject
-        "Form response"
+        form.subject
       end
       
       def deliver!
         ApplicationMailer.application_email(self).deliver
+        if form.confirmation_emails?
+          ApplicationMailer.confirmation_email(self).deliver
+        end
       end
       
       def html
