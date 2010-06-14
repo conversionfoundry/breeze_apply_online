@@ -21,7 +21,7 @@ module Breeze
           %{<li class="multipage-step-#{step.step} #{state}#{' first' if step.step == 1}#{' last' if step.step == page.views.count}"><span class="number">#{step.step}</span> <span class="title">#{step.title}</span></li>}
         end.join("\n")
         
-        template.content_tag :div, "<ol>#{step_list}</ol>".html_safe, :class => "multipage-steps"
+        template.content_tag :div, "<ol>#{step_list}</ol>".html_safe, :class => "multipage-steps step-#{current_step.step}"
       end
       
       def fields
