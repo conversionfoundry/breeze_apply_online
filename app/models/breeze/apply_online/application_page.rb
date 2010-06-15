@@ -20,6 +20,10 @@ module Breeze
             if valid?
               data[:_step] = self.next.name
               save_data_to controller.session
+              unless self.next.next?
+                application = form.application_class.factory(self)
+                application.save
+              end
               controller.redirect_to form.permalink and return false
             end
           elsif request.params[:back_button] && previous?
@@ -88,7 +92,7 @@ module Breeze
       end
       
       def method_missing(sym, *args, &block)
-        if field = all_fields[sym]
+        if field = all_fields_so_far[sym]
           field.value_for self
         elsif data.key? sym
           data[sym]
