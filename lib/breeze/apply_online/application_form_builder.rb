@@ -48,6 +48,8 @@ module Breeze
         end.join("\n").html_safe
         choice_list = template.content_tag :ol, choice_lis
         input = template.content_tag :fieldset, choice_list
+        options[:wrap] ||= {}
+        options[:wrap][:class] ||= "radio_button_group"
         wrap method, input, options
       end
 
@@ -113,7 +115,7 @@ module Breeze
         before, after = [:before, :after].collect do |k|
           options[k] ? template.content_tag(:span, options[k], :class => "#{k}-field") : ""
         end
-        [ before, input, after ].reject(&:blank?).join(" ").html_safe
+        template.content_tag :span, [ before, input, after ].reject(&:blank?).join(" ").html_safe, :class => :field
       end
 
       def filter_options(options)
