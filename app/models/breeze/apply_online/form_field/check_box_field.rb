@@ -12,10 +12,6 @@ module Breeze
           form.check_box name, clean_options
         end
         
-        def dependencies_met?(view)
-          true
-        end
-        
         def output_value(view)
           case value_for(view)
           when true, 1, "1" then "Yes"
