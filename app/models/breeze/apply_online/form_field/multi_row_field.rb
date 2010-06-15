@@ -40,8 +40,8 @@ module Breeze
             str << "<tbody>"
             value_for(form.object).each_with_index do |row, i|
               str << "<tr>"
-              subfields.each do |f|
-                str << "<td>#{f.options[:before]} "
+              subfields.each_with_index do |f, j|
+                str << "<td class=\"col-#{j}\">#{f.options[:before]} "
                 field_name = "form[#{name}][#{i}][#{f.name}]"
                 field_value = row[f.name]
                 str << case f
