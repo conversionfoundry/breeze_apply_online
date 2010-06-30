@@ -43,7 +43,7 @@ module Breeze
       
       def radio_button_group(method, choices, options = {})
         choice_lis = choices.collect do |choice|
-          choice = [ choice.to_s.humanize, choice ] unless choice.is_a?(Array)
+          choice = [ Symbol === choice ? choice.to_s.humanize : choice.to_s, choice ] unless choice.is_a?(Array)
           radio_button method, choice.last, :label => choice.first, :errors => false
         end.join("\n").html_safe
         choice_list = template.content_tag :ol, choice_lis
