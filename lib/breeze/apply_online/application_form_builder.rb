@@ -53,6 +53,19 @@ module Breeze
         wrap method, input, options
       end
 
+      def check_box_group(method, choices, options = {})
+        selected = Array(@object.send(method))
+        choice_lis = choices.collect do |choice|
+          choice = [ Symbol === choice ? choice.to_s.humanize : choice.to_s, choice ] unless choice.is_a?(Array)
+          "<li>" + template.check_box_tag("form[#{method}][]", choice.last, selected.include?(choice.last)) + " " + template.label_tag("form[#{method}][]", choice.first) + "</li>"
+        end.join("\n").html_safe
+        choice_list = template.content_tag :ol, choice_lis
+        input = template.content_tag :fieldset, choice_list
+        options[:wrap] ||= {}
+        options[:wrap][:class] ||= "check_box_group"
+        wrap method, input, options
+      end
+
       def wrap(method, input, options)
         contents = returning "" do |str|
           str << label(method, options[:label], :required => options[:required]) unless options[:label] == false

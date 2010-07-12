@@ -24,6 +24,13 @@ module Breeze
           contents << Breeze::ApplyOnline::FormField::Group.new(page, *args, &block)
         end
         
+        def check_box_group(*args, &block)
+          options = args.extract_options!
+          options[:group] = self
+          args << options
+          contents << Breeze::ApplyOnline::FormField::CheckBoxGroup.new(page, *args, &block)
+        end
+        
         def text(string)
           contents << Breeze::ApplyOnline::FormField::Text.new(page, :"text_#{string.hash}", :text => string)
         end
