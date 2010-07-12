@@ -32,7 +32,7 @@ module Breeze
         end
         
         def text(string)
-          contents << Breeze::ApplyOnline::FormField::Text.new(page, :"text_#{string.hash}", :text => string)
+          contents << Breeze::ApplyOnline::FormField::Text.new(page, :"text_#{string.hash.abs}", :text => string)
         end
         
         def legend
