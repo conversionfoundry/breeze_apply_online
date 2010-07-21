@@ -93,7 +93,10 @@ module Breeze
         
         def output_html(view)
           if dependencies_met?(view) && !value_for(view).blank?
-            "<tr><th style=\"text-align: left;\">#{label}</th><td>#{[ options[:before], output_value(view), options[:after] ].compact.join(" ")}</td></tr>"
+            str = [ options[:before], output_value(view), options[:after] ].compact.map do |s|
+              s.gsub /<[^>]+>/, ""
+            end
+            "<tr><th style=\"text-align: left;\">#{label}</th><td>#{str.join(" ")}</td></tr>"
           else
             ""
           end
