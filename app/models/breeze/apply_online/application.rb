@@ -3,6 +3,7 @@ module Breeze
     class Application
       include Mongoid::Document
       include Mongoid::Timestamps
+      identity :type => String
       
       field :data, :type => Hash
       field :html
