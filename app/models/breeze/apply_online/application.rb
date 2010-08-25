@@ -9,7 +9,7 @@ module Breeze
       field :html
       belongs_to_related :form, :class_name => "Breeze::Content::Page"
       
-      after_create :deliver!
+      after_create :schedule_delivery
       
       def self.factory(confirmation_page)
         returning new(:form => confirmation_page.form) do |response|
@@ -23,7 +23,7 @@ module Breeze
       end
       
       def sender
-        form.sender self
+        form.sender_of self
       end
       
       def subject
@@ -63,6 +63,11 @@ module Breeze
       
       def all_fields_so_far
         form.views.last.all_fields_so_far
+      end
+      
+    protected
+      def schedule_delivery
+        Breeze.queue self, :deliver!
       end
     end
   end
