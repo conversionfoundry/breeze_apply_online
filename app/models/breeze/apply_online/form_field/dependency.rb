@@ -15,6 +15,7 @@ module Breeze
           dependencies.inject(true) do |result, (field_name, expected)|
             if result
               field = view.all_fields_so_far[field_name]
+              raise "no field named #{field_name}" unless field.present?
               if value = field.value_for(view)
                 case expected
                 when true then !value.blank?
