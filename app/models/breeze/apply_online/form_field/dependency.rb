@@ -19,6 +19,7 @@ module Breeze
               if value = field.value_for(view)
                 case expected
                 when true then !value.blank?
+                when Regexp then expected === value
                 else value == expected
                 end
               else
@@ -51,17 +52,18 @@ module Breeze
       protected
         def check_function(f, e)
           cond = case e
-          when true then "!= ''"
-          else "== '#{e}'"
+          when true then "%s != ''"
+          when Regexp then "#{e.inspect}.test(%s)"
+          else "%s == '#{e}'"
           end
           <<-EOS
             function() {
               if (this.type == 'radio' || this.type == 'checkbox') {
                 if (this.checked) {
-                  $('#form_field_wrapper_#{field_name}').toggle($(this).attr('value') #{cond});
+                  $('#form_field_wrapper_#{field_name}').toggle(#{cond % "$(this).attr('value')"});
                 }
               } else {
-                $('#form_field_wrapper_#{field_name}').toggle($(this).val() #{cond});
+                $('#form_field_wrapper_#{field_name}').toggle(#{cond % "$(this).val()"});
               }
             }
           EOS
