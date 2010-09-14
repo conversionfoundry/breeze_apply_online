@@ -1,0 +1,6 @@
+<%= content_tag :h1, @enquiry.form.title %>
+<%= content_tag :h3, @enquiry.form.permalink(true) %>
+
+<table>
+  <%= @enquiry.html.html_safe %>
+</table>

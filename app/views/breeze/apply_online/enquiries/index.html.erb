@@ -1,0 +1,47 @@
+<% content_for :title, "Enquiries" %>
+
+<%= pane_layout do |layout| %>
+  <%= layout.header do %>
+    
+  <% end %>
+  <%= layout.inner do %>
+    <div class="enquiries container">
+      <table class="fancy">
+        <thead>
+          <tr>
+            <th>Date</th><th>Name</th><th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @enquiries.each do |enquiry| %>
+            <tr>
+              <td><%= enquiry.created_at.to_formatted_s(:short) %></td>
+              <td><%= link_to enquiry.name, admin_enquiry_path(enquiry), :target => :_blank %></td>
+              <td><%= enquiry.email || "—" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4"><%= will_paginate @enquiries %></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  <% end %>
+<% end %>
+
+<% content_for :left do %>
+  <%= pane_layout do |layout| %>
+    <%= layout.header do %>
+      <h2>Enquiries</h2>
+    <% end %>
+    <%= layout.inner do %>
+
+    <% end %>
+  <% end %>
+<% end %>
+
+<% content_for :head do %>
+  <%= stylesheet_link_tag "/breeze/stylesheets/enquiries.css" %>
+<% end %>

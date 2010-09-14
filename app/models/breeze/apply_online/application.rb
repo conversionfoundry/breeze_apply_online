@@ -5,6 +5,8 @@ module Breeze
       include Mongoid::Timestamps
       identity :type => String
       
+      extend ActiveSupport::Memoizable
+      
       field :data, :type => Hash
       field :html
       belongs_to_related :form, :class_name => "Breeze::Content::Page"
@@ -64,6 +66,16 @@ module Breeze
       def all_fields_so_far
         form.views.last.all_fields_so_far
       end
+      
+      def name
+        %w(name first_name firstname last_name lastname surname).map { |f| data[f.to_sym] }.reject(&:blank?).join(" ")
+      end
+      memoize :name
+      
+      def email
+        %w(email email_address).map { |f| data[f.to_sym] }.reject(&:blank?).first
+      end
+      memoize :email
       
     protected
       def schedule_delivery
