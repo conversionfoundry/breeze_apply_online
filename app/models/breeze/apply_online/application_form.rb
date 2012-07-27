@@ -10,15 +10,27 @@ module Breeze
       
       validates_presence_of :recipient
       
+      # def view_for(controller, request)
+      #   if controller.admin_signed_in? && request.params[:view]
+      #     views.by_name request.params[:view]
+      #   else
+      #     current_step = controller.session[:form_data] && controller.session[:form_data][id] && controller.session[:form_data][id][:_step]
+      #     views.by_name current_step
+      #   end
+      # end
+      
       def view_for(controller, request)
         if controller.admin_signed_in? && request.params[:view]
+          # If an admin has requested a particular view to edit, return that view
           views.by_name request.params[:view]
         else
+          # Otherwise, return the view for the current step
           current_step = controller.session[:form_data] && controller.session[:form_data][id] && controller.session[:form_data][id][:_step]
           views.by_name current_step
         end
       end
-      
+
+
       def application_class
         Application
       end

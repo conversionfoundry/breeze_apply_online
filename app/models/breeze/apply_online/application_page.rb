@@ -8,10 +8,13 @@ module Breeze
       attr_accessor :data
 
       def populate(content, controller, request)
-        returning super do |view|
-          view.data = load_data_from controller.session, request
+        # returning super do |view|
+        # binding.pry
+        super.tap do |view|
+          view.data = load_data_from content, controller.session, request
           view.save_data_to controller.session
         end
+
       end
       
       def render!
@@ -65,8 +68,10 @@ module Breeze
       end
 
       def self.form_fields
-        read_inheritable_attribute(:form_fields) || 
-        write_inheritable_attribute(:form_fields, [])
+        # read_inheritable_attribute(:form_fields) || 
+        # write_inheritable_attribute(:form_fields, [])
+        class_attribute(:form_fields) || 
+        class_attribute(:form_fields, [])
       end
       def form_fields; self.class.form_fields; end
       
@@ -114,8 +119,8 @@ module Breeze
       end
       
     protected
-      def load_data_from(session, request)
-        returning((session[:form_data] && session[:form_data][form.id]) || {}) do |data|
+      def load_data_from(form, session, request)
+        ((session[:form_data] && session[:form_data][form.id]) || {}).tap do |data|
           data.merge! request.params[:form] if request.params[:form].present?
         end.symbolize_keys
       end
