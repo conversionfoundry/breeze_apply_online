@@ -9,5 +9,5 @@ Breeze.hook :admin_menu do |menu, user|
 end
 
 Breeze.hook :component_info do |component_info|
-	component_info << {:name => 'Breeze Pay Online', :version => Breeze::ApplyOnline::VERSION }
+	component_info << {:name => 'Breeze Apply Online', :version => Breeze::ApplyOnline::VERSION }
 end
