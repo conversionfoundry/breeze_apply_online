@@ -5,7 +5,6 @@ module Breeze
       include Mongoid::Timestamps
       field :_id, type: String, default: -> { Moped::BSON::ObjectId.new.to_s }
       
-      extend ActiveSupport::Memoizable
       
       field :data, :type => Hash
       field :html
@@ -70,12 +69,10 @@ module Breeze
       def name
         %w(name first_name firstname last_name lastname surname).map { |f| data[f.to_sym] }.reject(&:blank?).join(" ")
       end
-      memoize :name
       
       def email
         %w(email email_address).map { |f| data[f.to_sym] }.reject(&:blank?).first
       end
-      memoize :email
       
     protected
       def schedule_delivery
