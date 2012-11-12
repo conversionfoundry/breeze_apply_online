@@ -3,13 +3,12 @@ module Breeze
     class Application
       include Mongoid::Document
       include Mongoid::Timestamps
-      identity :type => String
+      field :_id, type: String, default: -> { Moped::BSON::ObjectId.new.to_s }
       
-      extend ActiveSupport::Memoizable
       
       field :data, :type => Hash
       field :html
-      belongs_to_related :form, :class_name => "Breeze::Content::Page"
+      belongs_to :form, :class_name => "Breeze::Content::Page"
       
       after_create :schedule_delivery
       
@@ -70,12 +69,10 @@ module Breeze
       def name
         %w(name first_name firstname last_name lastname surname).map { |f| data[f.to_sym] }.reject(&:blank?).join(" ")
       end
-      memoize :name
       
       def email
         %w(email email_address).map { |f| data[f.to_sym] }.reject(&:blank?).first
       end
-      memoize :email
       
     protected
       def schedule_delivery
