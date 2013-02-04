@@ -47,13 +47,13 @@ module Breeze
       end
       
       def write_html!
-        returning to_html do |str|
+        to_html.tap do |str|
           write_attribute(:html, str)
         end
       end
       
       def to_html
-        returning "" do |html|
+        "".tap do |html|
           form.views.last.all_previous_steps.each do |step|
             step.form_fields.each do |field|
               html << field.output_html(self)

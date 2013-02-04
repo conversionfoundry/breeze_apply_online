@@ -13,7 +13,7 @@ module Breeze
 
     protected
       def lookup_context
-        @lookup_context ||= returning(ActionView::LookupContext.new(self.class._view_paths, details_for_lookup)) do |context|
+        @lookup_context ||= (ActionView::LookupContext.new(self.class._view_paths, details_for_lookup)).tap do |context|
           context.view_paths.insert 1, *Breeze::Theming::Theme.view_paths
         end
       end

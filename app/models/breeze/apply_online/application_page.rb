@@ -6,6 +6,9 @@ module Breeze
       field :title
 
       attr_accessor :data
+      cattr_accessor :form_fields do
+        []
+      end
 
       def populate(content, controller, request)
         # returning super do |view|
@@ -67,20 +70,16 @@ module Breeze
         form.views.select { |v| v._index < _index }
       end
 
-      def self.form_fields
-        # read_inheritable_attribute(:form_fields) || 
-        # write_inheritable_attribute(:form_fields, [])
-        class_attribute(:form_fields) || 
-        class_attribute(:form_fields, [])
-      end
-      def form_fields; self.class.form_fields; end
+      # def form_fields
+      #   self.class.form_fields
+      # end
       
       def data
         @data ||= {}
       end
       
       def all_fields
-        @all_fields ||= returning ActiveSupport::OrderedHash.new do |hash|
+        @all_fields ||= ActiveSupport::OrderedHash.new.tap do |hash|
           form_fields.map(&:all_fields).flatten.each do |field|
             hash[field.name] = field
           end
@@ -88,27 +87,31 @@ module Breeze
       end
       
       def all_fields_so_far
-        @all_fields_so_far ||= returning ActiveSupport::OrderedHash.new do |hash|
+        @all_fields_so_far ||= ActiveSupport::OrderedHash.new.tap do |hash|
           all_previous_steps.each do |step|
             hash.merge! step.all_fields
           end
           hash.merge! all_fields
         end
       end
-      
-      def method_missing(sym, *args, &block)
-        if field = all_fields_so_far[sym]
-          field.value_for self
-        elsif data.key? sym
-          data[sym]
-        elsif /^(\w+)\?$/ === sym.to_s && (field = all_fields_so_far[$1.to_sym])
-          !data[sym].blank?
-        elsif /^(\w+)_dependencies_met\?$/ === sym.to_s && (field = all_fields_so_far[$1.to_sym])
-          field.dependencies_met?(self)
-        else
-          super
-        end
+
+      def first
+        form.views[0]
       end
+      
+      # def method_missing(sym, *args, &block)
+      #   if field = all_fields_so_far[sym]
+      #     field.value_for self
+      #   elsif data.key? sym
+      #     data[sym]
+      #   elsif /^(\w+)\?$/ === sym.to_s && (field = all_fields_so_far[$1.to_sym])
+      #     !data[sym].blank?
+      #   elsif /^(\w+)_dependencies_met\?$/ === sym.to_s && (field = all_fields_so_far[$1.to_sym])
+      #     field.dependencies_met?(self)
+      #   else
+      #     super
+      #   end
+      # end
       
       def self.field_group(name, options = {}, &block)
         form_fields << Breeze::ApplyOnline::FormField::Group.new(self, name, options, &block)
