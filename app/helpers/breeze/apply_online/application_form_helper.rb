@@ -3,7 +3,7 @@ module Breeze
     module ApplicationFormHelper
       def application_form(options = {}, &block)
         return unless ApplicationPage === view
-        form_for view, options.merge(:as => :form, :url => page.permalink, :builder => ApplicationFormBuilder, :html => { :method => :post }), &block
+        form_for view, options.merge(:as => :form, :url => page.permalink, :builder => Breeze::ApplyOnline::ApplicationFormBuilder, :html => { :method => :post }), &block
       end
 
       ActionView::Helpers::FormHelper.module_eval do

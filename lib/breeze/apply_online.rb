@@ -1,4 +1,5 @@
 require "breeze/apply_online/engine"
+require "breeze/apply_online/application_form_builder"
 
 module Breeze
   module ApplyOnline

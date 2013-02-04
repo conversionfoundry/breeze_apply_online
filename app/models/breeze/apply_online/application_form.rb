@@ -41,7 +41,10 @@ module Breeze
       
     protected
       def define_form_pages
+        # binding.pry
         views.build({ :name => "confirmation", :title => "Confirmation" }, Breeze::ApplyOnline::ConfirmationPage)
+        # views << Breeze::ApplyOnline::ConfirmationPage.new( :name => "confirmation", :title => "Confirmation")
+
       end
     end
   end
