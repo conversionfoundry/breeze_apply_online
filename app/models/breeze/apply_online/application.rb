@@ -68,7 +68,7 @@ module Breeze
       end
       
       def name
-        %w(name first_name firstname last_name lastname surname).map { |f| data[f.to_sym] }.reject(&:blank?).join(" ")
+        %w(name your_name first_name firstname last_name lastname surname).map { |f| data[f.to_sym] }.reject(&:blank?).join(" ")
       end
       memoize :name
       
