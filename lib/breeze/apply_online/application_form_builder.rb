@@ -2,15 +2,15 @@ module Breeze
   module ApplyOnline
     class ApplicationFormBuilder < Breeze::Admin::FormBuilder
       unloadable
-      
+
       def current_step
         @object
       end
-      
+
       def page
         @object.page
       end
-      
+
       def steps
         step_list = page.views.collect do |step|
           state = case current_step.step <=> step.step
@@ -20,10 +20,10 @@ module Breeze
           end
           %{<li class="multipage-step-#{step.step} #{state}#{' first' if step.step == 1}#{' last' if step.step == page.views.count}"><span class="number">#{step.step}</span> <span class="title">#{step.title}</span></li>}
         end.join("\n")
-        
+
         template.content_tag :div, "<ol>#{step_list}</ol>".html_safe, :class => "multipage-steps step-#{current_step.step}"
       end
-      
+
       def fields
         current_step.form_fields.collect { |field| field.to_html(self) }.join("\n").html_safe
       end
@@ -31,17 +31,16 @@ module Breeze
       def back_button(label = "Back", options = {})
         template.submit_tag label, options.merge(:name => :back_button) if current_step.previous?
       end
-      
+
       def next_button(label = "Next", options = {})
-      	binding.pry
         label = options.delete(:finish) || "Finish" if current_step.next? && !current_step.next.next?
         template.submit_tag label, options.merge(:name => :next_button) if current_step.next?
       end
-      
+
       def error_messages
         template.render "/breeze/apply_online/error_messages", :target => object, :object_name => :form
       end
-      
+
       def radio_button_group(method, choices, options = {})
         choice_list = choices.collect do |choice|
           choice = [ Symbol === choice ? choice.to_s.humanize : choice.to_s, choice ] unless choice.is_a?(Array)
@@ -76,7 +75,7 @@ module Breeze
         end
         template.content_tag :li, contents.html_safe, (options[:wrap] || {}).reverse_merge(:class => options[:kind])
       end
-      
+
       def scripting
         script = "$(function() {\n#{@object.all_fields.values.map(&:dependencies).flatten.map(&:script).join("\n")}"
         if @object.all_fields.values.any? { |f| Breeze::ApplyOnline::FormField::MultiRowField === f }
@@ -91,7 +90,7 @@ module Breeze
                 }).length > 1);
               });
             }
-            
+
             $('table.multi-row-field a.add-row').live('click', function() {
               var t = $(this).closest('table');
               var r = $('tbody tr', t).last();
@@ -106,14 +105,14 @@ module Breeze
               renumberMultiRowField(t);
               return false;
             });
-            
+
             renumberMultiRowField('table.multi-row-field');
           EOS
         end
         script << "\n});"
         template.javascript_tag script.html_safe, :defer => "defer"
       end
-      
+
       def hidden_fields
         unless ConfirmationPage === @object
           @object.all_previous_steps.collect do |step|
@@ -123,7 +122,7 @@ module Breeze
           end.flatten.join("\n").html_safe
         end
       end
-      
+
     protected
       def filter_options(options)
         super.except :before, :after, :message, :options, :wrap
